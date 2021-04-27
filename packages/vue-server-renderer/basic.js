@@ -465,7 +465,7 @@
     'default,defaultchecked,defaultmuted,defaultselected,defer,disabled,' +
     'enabled,formnovalidate,hidden,indeterminate,inert,ismap,itemscope,loop,multiple,' +
     'muted,nohref,noresize,noshade,novalidate,nowrap,open,pauseonexit,readonly,' +
-    'required,reversed,scoped,seamless,selected,sortable,translate,' +
+    'required,reversed,scoped,seamless,selected,sortable,' +
     'truespeed,typemustmatch,visible'
   );
 
@@ -635,7 +635,7 @@
       } else if (key === 'textContent') {
         setText(node, props[key], false);
       } else if (key === 'value' && node.tag === 'textarea') {
-        setText(node, props[key], false);
+        setText(node, toString(props[key]), false);
       } else {
         // $flow-disable-line (WTF?)
         var attr = propsToAttrMap[key] || key.toLowerCase();
@@ -1929,18 +1929,19 @@
       " Expected " + (expectedTypes.map(capitalize).join(', '));
     var expectedType = expectedTypes[0];
     var receivedType = toRawType(value);
-    var expectedValue = styleValue(value, expectedType);
-    var receivedValue = styleValue(value, receivedType);
     // check if we need to specify expected value
-    if (expectedTypes.length === 1 &&
-        isExplicable(expectedType) &&
-        !isBoolean(expectedType, receivedType)) {
-      message += " with value " + expectedValue;
+    if (
+      expectedTypes.length === 1 &&
+      isExplicable(expectedType) &&
+      isExplicable(typeof value) &&
+      !isBoolean(expectedType, receivedType)
+    ) {
+      message += " with value " + (styleValue(value, expectedType));
     }
     message += ", got " + receivedType + " ";
     // check if we need to specify received value
     if (isExplicable(receivedType)) {
-      message += "with value " + receivedValue + ".";
+      message += "with value " + (styleValue(value, receivedType)) + ".";
     }
     return message
   }
@@ -1955,9 +1956,9 @@
     }
   }
 
+  var EXPLICABLE_TYPES = ['string', 'number', 'boolean'];
   function isExplicable (value) {
-    var explicitTypes = ['string', 'number', 'boolean'];
-    return explicitTypes.some(function (elem) { return value.toLowerCase() === elem; })
+    return EXPLICABLE_TYPES.some(function (elem) { return value.toLowerCase() === elem; })
   }
 
   function isBoolean () {
@@ -3366,7 +3367,7 @@
 
   // Regular Expressions for parsing tags and attributes
   var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
-  var dynamicArgAttribute = /^\s*((?:v-[\w-]+:|@|:|#)\[[^=]+\][^\s"'<>\/=]*)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
+  var dynamicArgAttribute = /^\s*((?:v-[\w-]+:|@|:|#)\[[^=]+?\][^\s"'<>\/=]*)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
   var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z" + (unicodeRegExp.source) + "]*";
   var qnameCapture = "((?:" + ncname + "\\:)?" + ncname + ")";
   var startTagOpen = new RegExp(("^<" + qnameCapture));
@@ -5156,9 +5157,9 @@
         code += genModifierCode;
       }
       var handlerCode = isMethodPath
-        ? ("return " + (handler.value) + "($event)")
+        ? ("return " + (handler.value) + ".apply(null, arguments)")
         : isFunctionExpression
-          ? ("return (" + (handler.value) + ")($event)")
+          ? ("return (" + (handler.value) + ").apply(null, arguments)")
           : isFunctionInvocation
             ? ("return " + (handler.value))
             : handler.value;
@@ -8417,8 +8418,10 @@
   }
 
   function createComponentInstanceForVnode (
-    vnode, // we know it's MountedComponentVNode but flow doesn't
-    parent // activeInstance in lifecycle state
+    // we know it's MountedComponentVNode but flow doesn't
+    vnode,
+    // activeInstance in lifecycle state
+    parent
   ) {
     var options = {
       _isComponent: true,
