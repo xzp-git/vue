@@ -34,18 +34,20 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // exposed util methods.
   // NOTE: these are not considered part of the public API - avoid relying on
   // them unless you are aware of the risk.
+  // 这些工具方法不视作全局API的一部分,除非你已经意识到某些风险,否则不要去依赖他们
   Vue.util = {
     warn,
     extend,
     mergeOptions,
     defineReactive
   }
-
+  // 静态方法   set/delete/nextTick
   Vue.set = set
   Vue.delete = del
   Vue.nextTick = nextTick
 
   // 2.6 explicit observable API
+  // 让一个对象可响应
   Vue.observable = <T>(obj: T): T => {
     observe(obj)
     return obj
