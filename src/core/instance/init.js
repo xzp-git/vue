@@ -13,6 +13,8 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
+  // 给Vue实例增加_init()方法
+  // 合并options / 初始化操作
   Vue.prototype._init = function (options?: Object) {
     const vm: Component = this
     // a uid
@@ -27,8 +29,10 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // a flag to avoid this being observed
+    // 如果是vue的实例不需要被observe
     vm._isVue = true
     // merge options
+    // 合并 options
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -49,13 +53,22 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
+    // vm的生命周期相关变量初始化
+    // $children / $parent / $root / $refs
     initLifecycle(vm)
+    // vm的事件监听初始化，父组件绑定在当前组件上的事情
     initEvents(vm)
+    // vm的编译render初始化
+    // $slots/$scopedSlots/_c/$createElement/$attrs/$listeners
     initRender(vm)
+    // beforeCreate 生命周期钩子的回调
     callHook(vm, 'beforeCreate')
+    // 把inject的成员注入到vm上
     initInjections(vm) // resolve injections before data/props
     initState(vm)
+    // 初始化provide
     initProvide(vm) // resolve provide after data/props
+    // created 生命周期钩子的回调
     callHook(vm, 'created')
 
     /* istanbul ignore if */

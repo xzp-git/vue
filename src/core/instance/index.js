@@ -24,6 +24,7 @@ eventsMixin(Vue)
 // _update/$forceUpdate/$destroy
 lifecycleMixin(Vue)
 // 混入render
+// $nextTick/_render
 renderMixin(Vue)
 
 export default Vue
