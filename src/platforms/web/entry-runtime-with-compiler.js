@@ -87,7 +87,7 @@ Vue.prototype.$mount = function (
     }
   }
   // 调用mount方法,渲染DOM
-  return mount.call(this, el, hydrating)
+  return mount.call(this, el, hydrating)   //高阶函数  函数劫持 用户调用$mount时会先执行重写后的方法 增加了compileToFunction功能
 }
 
 /**
@@ -104,6 +104,8 @@ function getOuterHTML (el: Element): string {
   }
 }
 
-Vue.compile = compileToFunctions
+Vue.compile = compileToFunctions  //将template转换成render函数
 
 export default Vue
+
+//with-compile = compileToFunctions

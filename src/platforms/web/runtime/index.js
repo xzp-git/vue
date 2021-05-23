@@ -1,4 +1,5 @@
 /* @flow */
+// 这是一个统一的入口带compiler的只是增加了一个编译的过程，不带compiler的则直接使用此文件
 
 import Vue from 'core/index'
 import config from 'core/config'
@@ -29,19 +30,19 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 
 // install platform runtime directives & components
-extend(Vue.options.directives, platformDirectives)
-extend(Vue.options.components, platformComponents)
+extend(Vue.options.directives, platformDirectives) //v-show v-model
+extend(Vue.options.components, platformComponents) //transtion
 
 // install platform patch function
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method
-Vue.prototype.$mount = function (
+Vue.prototype.$mount = function ( //公共的$mount方法
   el?: string | Element,
   hydrating?: boolean
 ): Component {
   el = el && inBrowser ? query(el) : undefined
-  return mountComponent(this, el, hydrating)
+  return mountComponent(this, el, hydrating)//组件挂载
 }
 
 // devtools global hook

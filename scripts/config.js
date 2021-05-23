@@ -216,7 +216,7 @@ const builds = {
 
 function genConfig (name) {
   const opts = builds[name]
-  const config = {
+  const config = { //rollup配置
     input: opts.entry,
     external: opts.external,
     plugins: [

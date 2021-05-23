@@ -35,7 +35,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // NOTE: these are not considered part of the public API - avoid relying on
   // them unless you are aware of the risk.
   // 这些工具方法不视作全局API的一部分,除非你已经意识到某些风险,否则不要去依赖他们
-  Vue.util = {
+  Vue.util = { 
     warn,
     extend,
     mergeOptions,

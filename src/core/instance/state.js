@@ -46,10 +46,10 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
-  vm._watchers = []
+  vm._watchers = [] //收集当前实例上的所有的watcher $forceUpdate
   const opts = vm.$options
-  if (opts.props) initProps(vm, opts.props)
-  if (opts.methods) initMethods(vm, opts.methods)
+  if (opts.props) initProps(vm, opts.props) //组件的属性原理 vm._props
+  if (opts.methods) initMethods(vm, opts.methods) //将所有的方法定义在实例上  内部的this都是实例
   if (opts.data) {
     initData(vm)
   } else {
@@ -69,7 +69,7 @@ function initProps (vm: Component, propsOptions: Object) {
   const keys = vm.$options._propKeys = []
   const isRoot = !vm.$parent
   // root instance props should be converted
-  if (!isRoot) {
+  if (!isRoot) { //只有根节点才需要把数据 定义成响应式的
     toggleObserving(false)
   }
   for (const key in propsOptions) {

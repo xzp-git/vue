@@ -5,14 +5,14 @@ const rollup = require('rollup')
 const terser = require('terser')
 
 if (!fs.existsSync('dist')) {
-  fs.mkdirSync('dist')
+  fs.mkdirSync('dist') //不存在创建dist目录
 }
 
-let builds = require('./config').getAllBuilds()
+let builds = require('./config').getAllBuilds() //获取到了配置，同时找到了入口
 
 // filter builds via command line arg
-if (process.argv[2]) {
-  const filters = process.argv[2].split(',')
+if (process.argv[2]) { //根据参数过滤出需要打包的内容
+  const filters = process.argv[2].split(',') //分割参数
   builds = builds.filter(b => {
     return filters.some(f => b.output.file.indexOf(f) > -1 || b._name.indexOf(f) > -1)
   })
@@ -25,7 +25,7 @@ if (process.argv[2]) {
 
 build(builds)
 
-function build (builds) {
+function build (builds) {//依次根据配置进行打包
   let built = 0
   const total = builds.length
   const next = () => {
